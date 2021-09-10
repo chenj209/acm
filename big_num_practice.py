@@ -41,6 +41,21 @@ def add_op(num1_lst, num2_lst, out_lst):
         if DEBUG:
             print("=>", out_lst[i], "adv_bit:", out_lst[i+1])
 
+def sub_op(num1_lst, num2_lst, out_lst):
+    clear_num(out_lst)
+    for i in range(MAX_LEN-1):
+        if DEBUG:
+            print("subing", num1_lst[i], "and", num2_lst[i])
+        if not (num1_lst[i] or num2_lst[i] or out_lst[i]):
+            break
+        out_lst[i] += num1_lst[i] - num2_lst[i]
+        if out_lst[i] < 0:
+            out_lst[i+1] -= 1
+            out_lst[i] +=  10
+        if DEBUG:
+            print("=>", out_lst[i], "sub_bit:", out_lst[i+1])
+
+
 def big_num_op(num1, op_name, num2):
     num1_lst = read_num(num1)
     # print("num1_lst", num1_lst)
@@ -52,6 +67,8 @@ def big_num_op(num1, op_name, num2):
     out_lst = [0] * MAX_LEN
     if op_name == "+":
         add_op(num1_lst, num2_lst, out_lst)
+    if op_name == "-":
+        sub_op(num1_lst, num2_lst, out_lst)
     print("Result:", print_num(out_lst))
     return
 
