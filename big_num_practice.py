@@ -29,21 +29,17 @@ def print_num(digits_lst):
 
 def add_op(num1_lst, num2_lst, out_lst):
     clear_num(out_lst)
-    adv_bit = 0
-    for i in range(MAX_LEN):
+    for i in range(MAX_LEN-1):
         if DEBUG:
             print("adding", num1_lst[i], "and", num2_lst[i])
-        if not (adv_bit or num1_lst[i] or num2_lst[i]):
+        if not (num1_lst[i] or num2_lst[i] or out_lst[i]):
             break
-        cur_bit = num1_lst[i] + num2_lst[i] + adv_bit
-        if cur_bit >= 10:
-            adv_bit = 1
-            cur_bit %= 10
-        else:
-            adv_bit = 0
-        out_lst[i] = cur_bit
+        out_lst[i] += num1_lst[i] + num2_lst[i]
+        if out_lst[i] >= 10:
+            out_lst[i+1] += 1
+            out_lst[i] -=  10
         if DEBUG:
-            print("=>", out_lst[i], "adv_bit:", adv_bit)
+            print("=>", out_lst[i], "adv_bit:", out_lst[i+1])
 
 def big_num_op(num1, op_name, num2):
     num1_lst = read_num(num1)
