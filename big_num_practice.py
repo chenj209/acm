@@ -1,5 +1,9 @@
-MAX_LEN = 1004
+MAX_LEN = 10
 DEBUG = 1
+def debug_log(*msg, flag=True):
+    if DEBUG and flag:
+        print(*msg)
+
 def clear_num(digits_lst):
     assert(len(digits_lst) == MAX_LEN)
     for i in range(MAX_LEN):
@@ -30,30 +34,37 @@ def print_num(digits_lst):
 def add_op(num1_lst, num2_lst, out_lst):
     clear_num(out_lst)
     for i in range(MAX_LEN-1):
-        if DEBUG:
-            print("adding", num1_lst[i], "and", num2_lst[i])
-        if not (num1_lst[i] or num2_lst[i] or out_lst[i]):
-            break
+        debug_log("adding", num1_lst[i], "and", num2_lst[i])
         out_lst[i] += num1_lst[i] + num2_lst[i]
         if out_lst[i] >= 10:
             out_lst[i+1] += 1
             out_lst[i] -=  10
-        if DEBUG:
-            print("=>", out_lst[i], "adv_bit:", out_lst[i+1])
+        debug_log("=>", out_lst[i], "adv_bit:", out_lst[i+1])
 
 def sub_op(num1_lst, num2_lst, out_lst):
     clear_num(out_lst)
     for i in range(MAX_LEN-1):
-        if DEBUG:
-            print("subing", num1_lst[i], "and", num2_lst[i])
-        if not (num1_lst[i] or num2_lst[i] or out_lst[i]):
-            break
+        debug_log("subing", num1_lst[i], "and", num2_lst[i])
         out_lst[i] += num1_lst[i] - num2_lst[i]
         if out_lst[i] < 0:
             out_lst[i+1] -= 1
             out_lst[i] +=  10
-        if DEBUG:
-            print("=>", out_lst[i], "sub_bit:", out_lst[i+1])
+        debug_log("=>", out_lst[i], "sub_bit:", out_lst[i+1])
+
+def mult_op(num1_lst, num2_lst, out_lst):
+    clear_num(out_lst)
+    for i in range(MAX_LEN-1):
+        debug_log("out digit", i)
+        for j in range(0, i+1):
+            temp = num1_lst[j] * num2_lst[i-j]
+            debug_log("temp:", temp, flag=temp)
+            out_lst[i] += temp
+        if out_lst[i] >= 10:
+            out_lst[i+1] += out_lst[i] // 10
+            out_lst[i] %= 10
+        debug_log("=>", out_lst[i], "adv bit:", out_lst[i+1])
+
+
 
 
 def big_num_op(num1, op_name, num2):
@@ -69,6 +80,9 @@ def big_num_op(num1, op_name, num2):
         add_op(num1_lst, num2_lst, out_lst)
     if op_name == "-":
         sub_op(num1_lst, num2_lst, out_lst)
+    if op_name == "*":
+        mult_op(num1_lst, num2_lst, out_lst)
+
     print("Result:", print_num(out_lst))
     return
 
