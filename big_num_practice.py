@@ -15,7 +15,7 @@ def read_num(num_str):
     a array in reversed order, i.e. the lower digit on
     the small index
     """
-    digits_lst = [0] * 1004
+    digits_lst = [0] * MAX_LEN
     l = len(num_str)
     for i in range(l):
         digits_lst[i] = int(num_str[l-i-1])
@@ -24,7 +24,7 @@ def read_num(num_str):
 def print_num(digits_lst):
     out = ""
     st = MAX_LEN - 1
-    while st >= 0 and digits_lst[st] == 0:
+    while st > 0 and digits_lst[st] == 0:
         st -= 1
     while st >= 0:
         out += str(digits_lst[st])
@@ -64,6 +64,51 @@ def mult_op(num1_lst, num2_lst, out_lst):
             out_lst[i] %= 10
         debug_log("=>", out_lst[i], "adv bit:", out_lst[i+1])
 
+def greater_eq(num1, num2, num1_last_digit, l2):
+    if (num1[num1_last_digit+l2] != 0):
+        return True
+    # equal length
+    for i in range(l2):
+        if num1[num1_last_digit+l2-1-i] > num2[l2-i-1]:
+            return True
+        if num1[num1_last_digit+l2-1-i] < num2[l2-i-1]:
+            return False
+    return True
+
+
+
+def div_op(num1_lst, num2_lst, out_remain, out_qt):
+    clear_num(out_remain)
+    clear_num(out_qt)
+    l1 = MAX_LEN
+    while l1 >= 0 and num1_lst[l1-1] == 0:
+        l1 -= 1
+    l2 = MAX_LEN
+    while l2 >= 0 and num2_lst[l2-1] == 0:
+        l2 -= 1
+    for i in range(MAX_LEN):
+        out_remain[i] = num1_lst[i]
+
+    for cur_digit in range(max(l1-l2,0),-1,-1):
+        print("computing digit:", cur_digit)
+        while greater_eq(out_remain,num2_lst,cur_digit,l2):
+            # import ipdb; ipdb.set_trace()
+            for i in range(l2):
+                out_remain[cur_digit+i] -= num2_lst[i]
+                if out_remain[cur_digit+i] < 0:
+                    out_remain[cur_digit+i+1] -= 1
+                    out_remain[cur_digit] += 10
+            out_qt[cur_digit] += 1
+            if DEBUG:
+                print(print_num(out_remain))
+
+    remainder_str = print_num(out_remain)
+    if remainder_str:
+        print("Remainder:", remainder_str)
+
+
+
+
 
 
 
@@ -82,6 +127,9 @@ def big_num_op(num1, op_name, num2):
         sub_op(num1_lst, num2_lst, out_lst)
     if op_name == "*":
         mult_op(num1_lst, num2_lst, out_lst)
+    if op_name == "/":
+        remainder = [0] * MAX_LEN
+        div_op(num1_lst, num2_lst, remainder, out_lst)
 
     print("Result:", print_num(out_lst))
     return
